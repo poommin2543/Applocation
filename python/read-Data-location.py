@@ -15,5 +15,8 @@ def stream_handler(message):
     print(message["event"]) # put
     print(message["path"]) # /air
     print(message["data"]) # ON or OFF
+    # print(type(message["data"]))
+    # print(message["data"]["location"]["latitude"])
+    # print(message["data"]["location"]["longitude"])
 
 my_stream = db.stream(stream_handler)

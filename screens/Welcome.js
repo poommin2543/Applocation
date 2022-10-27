@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { Button } from "@react-native-material/core";
-// import firebase from './database/firebase';
-// import {ref,set} from 'firebase/database';
-// import db from '..firebase';
 import { ref, set, update, onValue, remove } from "firebase/database";
-// import { ref, set, update, onValue, remove ,getDatabase} from "firebase/database";
 import { db } from '../config';
 
 const Welcome = ({ navigation }) => {
@@ -17,8 +13,10 @@ const Welcome = ({ navigation }) => {
   );
   const[Latitude,setLatitude] = useState('latitude');
   const[Longitude,setLongitude] = useState('longitude');
+  const[Altitude,setAltitude] = useState('altitude');
   var latitudedata = Latitude;
   var longitudedata = Longitude;
+  var altitudedata = Altitude;
   useEffect(() => {
     CheckIfLocationEnabled();
     GetCurrentLocation();
@@ -54,23 +52,25 @@ const Welcome = ({ navigation }) => {
     let { coords } = await Location.getCurrentPositionAsync();
     
     if (coords) {
-      const { latitude, longitude } = coords;
+      console.log(coords);
+      const { latitude, longitude , altitude} = coords;
       setLatitude(latitude);
       setLongitude(longitude);
+      setAltitude(altitude);
       let response = await Location.reverseGeocodeAsync({
         
         latitude,
         longitude,
+        altitude,
       });
+      // console.log(response);
       // latitude = 14.876478;
       // longitude = 102.0157481;
-      console.log(latitude, longitude);
+      console.log(latitude, longitude, altitude);
       for (let item of response) {
         // console.log(item)
         let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
-
         setDisplayCurrentAddress(address);
-
         // if (address.length > 0) {
         //   setTimeout(() => {
         //     navigation.navigate('Home', { item: address });
@@ -79,18 +79,16 @@ const Welcome = ({ navigation }) => {
       }
     }
 
-    
-
-      
-  
   };
   console.log('createData');
   console.log(latitudedata);
   console.log(longitudedata);
+  console.log(altitudedata);
   function createData() {
     set(ref(db, 'location/' ), {          
       longitude: longitudedata,
-      latitude: latitudedata 
+      latitude: latitudedata,
+      altitude: altitudedata 
     }).then(() => {
       console.log('createData');
       // Data saved successfully!
@@ -101,6 +99,7 @@ const Welcome = ({ navigation }) => {
           alert(error);
       });
       }
+      
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -108,16 +107,20 @@ const Welcome = ({ navigation }) => {
         <Text style={styles.title}>What's your address?</Text>
       </View>
       <Text style={styles.text}>Nnn</Text>
+      <Button title="Update location" color='white' onPress={GetCurrentLocation}/>
+      <Text style={styles.text}></Text>
       <Text style={styles.text}>{displayCurrentAddress}</Text>
       <Text style={styles.text}>Latitude : {Latitude}</Text>
       <Text style={styles.text}>Longitude : {Longitude}</Text>
+      <Text style={styles.text}>Altitude : {Altitude}</Text>
       {/* <Button name = 'Ok' color='white'/> */}
       <Text style={styles.text}></Text>
       {/* <Button title="Sent" color='white' onPress={() => create()}/> */}
       <Button title="Sent Data" color='white' onPress={createData}/>
+      
     </View>
   );
-  
+      
 };
 
 
