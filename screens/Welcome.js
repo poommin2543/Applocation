@@ -85,7 +85,7 @@ const Welcome = ({ navigation }) => {
   console.log(longitudedata);
   console.log(altitudedata);
   function createData() {
-    set(ref(db, 'location/' ), {          
+    set(ref(db, 'Rover1/location/user' ), {          
       longitude: longitudedata,
       latitude: latitudedata,
       altitude: altitudedata 
